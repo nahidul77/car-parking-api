@@ -41,4 +41,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('auth/register', RegisterController::class)->name('register');
 Route::post('auth/login', LoginController::class)->name('login');
 
-Route::get('zones', [ZoneController::class, 'index']);
+Route::get('zones', [ZoneController::class, 'index'])->name('all.zones');

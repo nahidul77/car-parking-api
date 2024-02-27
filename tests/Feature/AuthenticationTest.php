@@ -34,4 +34,41 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    public function testUserCanRegisterWithCorrectCredentials()
+    {
+        $response = $this->postJson(route('register'), [
+            'name' => 'Nahidul Islam',
+            'email' => 'nahid@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password'
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonStructure([
+                'access_token'
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'Nahidul Islam',
+            'email' => 'nahid@example.com'
+        ]);
+    }
+
+    public function testUserCannotRegisterWithIncorrectCredentials()
+    {
+        $response = $this->postJson(route('register'), [
+            'name' => 'Nahidul Islam',
+            'email' => 'nahid@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'wrong_password'
+        ]);
+
+        $response->assertStatus(422);
+
+        $this->assertDatabaseMissing('users', [
+            'name' => 'Nahidul Islam',
+            'email' => 'nahid@example.com'
+        ]);
+    }
 }

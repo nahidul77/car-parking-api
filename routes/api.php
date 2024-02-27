@@ -27,9 +27,9 @@ use App\Models\Vehicle;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('auth/logout', LogoutController::class);
 
-    Route::get('profile', [ProfileController::class, 'show']);
-    Route::put('profile', [ProfileController::class, 'update']);
-    Route::put('password', PasswordUpdateController::class);
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('password', PasswordUpdateController::class)->name('password.update');
 
     Route::apiResource('vehicles', VehicleController::class);
 
@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('parking/{parking}', [ParkingController::class, 'stop']);
 });
 
-Route::post('auth/register', RegisterController::class);
+Route::post('auth/register', RegisterController::class)->name('register');
 Route::post('auth/login', LoginController::class)->name('login');
 
 Route::get('zones', [ZoneController::class, 'index']);

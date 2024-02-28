@@ -10,6 +10,10 @@ use Illuminate\Validation\Rules\Password;
 
 class PasswordUpdateController extends Controller
 {
+    /**
+     *
+     *@group Auth
+     */
     public function __invoke(Request $request)
     {
         $request->validate([

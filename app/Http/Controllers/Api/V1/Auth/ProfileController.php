@@ -10,6 +10,10 @@ use App\Http\Controllers\Controller;
 
 class ProfileController extends Controller
 {
+    /**
+     *
+     *@group Auth
+     */
     public function show(Request $request)
     {
         return response()->json($request->user()->only('name', 'email'));

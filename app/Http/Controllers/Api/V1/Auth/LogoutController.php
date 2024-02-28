@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 
 class LogoutController extends Controller
 {
+    /**
+     *
+     *@group Auth
+     */
     public function __invoke(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

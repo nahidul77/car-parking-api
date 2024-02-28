@@ -9,6 +9,10 @@ use Illuminate\Http\Request;
 
 class ZoneController extends Controller
 {
+    /**
+     *
+     *@group Zones
+     */
     public function index()
     {
         return ZoneResource::collection(Zone::all());

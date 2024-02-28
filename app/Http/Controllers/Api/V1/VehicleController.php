@@ -12,7 +12,8 @@ use Illuminate\Http\Response;
 class VehicleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     *
+     *@group Vehicles
      */
     public function index()
     {

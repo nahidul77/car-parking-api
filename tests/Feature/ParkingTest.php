@@ -4,8 +4,9 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Vehicle;
 use App\Models\Zone;
+use App\Models\Parking;
+use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -35,5 +36,64 @@ class ParkingTest extends TestCase
             ]);
 
         $this->assertDatabaseCount('parkings', '1');
+    }
+
+    public function testUserCanGetOngoingParkingWithCorrectPrice()
+    {
+        $user = User::factory()->create();
+        $vehicle = Vehicle::factory()->create(['user_id' => $user->id]);
+        $zone = Zone::first();
+
+        $this->actingAs($user)->postJson(route('parking.start'), [
+            'vehicle_id' => $vehicle->id,
+            'zone_id' => $zone->id,
+        ]);
+
+        $this->travel(2)->hours();
+
+        $parking = Parking::first();
+
+        $response = $this->actingAs($user)->getJson(route('parking.show', $parking->id));
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data'])
+            ->assertJson([
+                'data' => [
+                    'stop_time' => null,
+                    'total_price' => $zone->price_per_hour * 2,
+                ]
+            ]);
+    }
+
+    public function testUserCanStopParking()
+    {
+        $user = User::factory()->create();
+        $vehicle = Vehicle::factory()->create(['user_id' => $user->id]);
+        $zone = Zone::first();
+
+        $this->actingAs($user)->postJson(route('parking.start'), [
+            'vehicle_id' => $vehicle->id,
+            'zone_id' => $zone->id,
+        ]);
+
+        $this->travel(2)->hours();
+
+        $parking = Parking::first();
+
+        $response = $this->actingAs($user)->putJson(route('parking.stop', $parking->id));
+
+        $updatedParking = Parking::find($parking->id);
+
+        $response->assertStatus(200)
+            ->assertJsonStructure(['data'])
+            ->assertJson([
+                'data' => [
+                    'start_time' => $updatedParking->start_time->toDateTimeString(),
+                    'stop_time' => $updatedParking->end_time->toDateTimeString(),
+                    'total_price' => $updatedParking->total_price,
+                ]
+            ]);
+
+        $this->assertDatabaseCount('parkings', 1);
     }
 }

@@ -14,6 +14,7 @@ class ParkingController extends Controller
      *
      *@group Parking
      */
+    
     public function start(Request $request)
     {
         $parkingData = $request->validate([
